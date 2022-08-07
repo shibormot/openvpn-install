@@ -634,40 +634,41 @@ function default_options() {
 }
 
 function save_options() {
-    echo CC_CIPHER_CHOICE=$CC_CIPHER_CHOICE >> ~/openvpn-install.env
-    echo CERT_CURVE_CHOICE=$CERT_CURVE_CHOICE >> ~/openvpn-install.env
-    echo CERT_TYPE=$CERT_TYPE >> ~/openvpn-install.env
-    echo CIPHER_CHOICE=$CIPHER_CHOICE >> ~/openvpn-install.env
-    echo CLIENT=$CLIENT >> ~/openvpn-install.env
-    echo CLIENTNUMBER=$CLIENTNUMBER >> ~/openvpn-install.env
-    echo COMPRESSION_CHOICE=$COMPRESSION_CHOICE >> ~/openvpn-install.env
-    echo COMPRESSION_ENABLED=$COMPRESSION_ENABLED >> ~/openvpn-install.env
-    echo CUSTOMIZE_ENC=$CUSTOMIZE_ENC >> ~/openvpn-install.env
-    echo DH_CURVE_CHOICE=$DH_CURVE_CHOICE >> ~/openvpn-install.env
-    echo DH_KEY_SIZE_CHOICE=$DH_KEY_SIZE_CHOICE >> ~/openvpn-install.env
-    echo DH_TYPE=$DH_TYPE >> ~/openvpn-install.env
-    echo DNS=$DNS >> ~/openvpn-install.env
-    echo DNS1=$DNS1 >> ~/openvpn-install.env
-    echo DNS2=$DNS2 >> ~/openvpn-install.env
-    echo ENDPOINT=$ENDPOINT >> ~/openvpn-install.env
-    echo HMAC_ALG_CHOICE=$HMAC_ALG_CHOICE >> ~/openvpn-install.env
-    echo IP=$IP >> ~/openvpn-install.env
-    echo IPV6_SUPPORT=$IPV6_SUPPORT >> ~/openvpn-install.env
-    echo PASS=$PASS >> ~/openvpn-install.env
-    echo PORT=$PORT >> ~/openvpn-install.env
-    echo PORT_CHOICE=$PORT_CHOICE >> ~/openvpn-install.env
-    echo PROTOCOL_CHOICE=$PROTOCOL_CHOICE >> ~/openvpn-install.env
-    echo RSA_KEY_SIZE_CHOICE=$RSA_KEY_SIZE_CHOICE >> ~/openvpn-install.env
-    echo TLS_SIG=$TLS_SIG >> ~/openvpn-install.env
+	echo "" > ~/openvpn-install.env
+	echo CC_CIPHER_CHOICE=$CC_CIPHER_CHOICE >> ~/openvpn-install.env
+	echo CERT_CURVE_CHOICE=$CERT_CURVE_CHOICE >> ~/openvpn-install.env
+	echo CERT_TYPE=$CERT_TYPE >> ~/openvpn-install.env
+	echo CIPHER_CHOICE=$CIPHER_CHOICE >> ~/openvpn-install.env
+	echo CLIENT=$CLIENT >> ~/openvpn-install.env
+	echo CLIENTNUMBER=$CLIENTNUMBER >> ~/openvpn-install.env
+	echo COMPRESSION_CHOICE=$COMPRESSION_CHOICE >> ~/openvpn-install.env
+	echo COMPRESSION_ENABLED=$COMPRESSION_ENABLED >> ~/openvpn-install.env
+	echo CUSTOMIZE_ENC=$CUSTOMIZE_ENC >> ~/openvpn-install.env
+	echo DH_CURVE_CHOICE=$DH_CURVE_CHOICE >> ~/openvpn-install.env
+	echo DH_KEY_SIZE_CHOICE=$DH_KEY_SIZE_CHOICE >> ~/openvpn-install.env
+	echo DH_TYPE=$DH_TYPE >> ~/openvpn-install.env
+	echo DNS=$DNS >> ~/openvpn-install.env
+	echo DNS1=$DNS1 >> ~/openvpn-install.env
+	echo DNS2=$DNS2 >> ~/openvpn-install.env
+	echo ENDPOINT=$ENDPOINT >> ~/openvpn-install.env
+	echo HMAC_ALG_CHOICE=$HMAC_ALG_CHOICE >> ~/openvpn-install.env
+	echo IP=$IP >> ~/openvpn-install.env
+	echo IPV6_SUPPORT=$IPV6_SUPPORT >> ~/openvpn-install.env
+	echo PASS=$PASS >> ~/openvpn-install.env
+	echo PORT=$PORT >> ~/openvpn-install.env
+	echo PORT_CHOICE=$PORT_CHOICE >> ~/openvpn-install.env
+	echo PROTOCOL_CHOICE=$PROTOCOL_CHOICE >> ~/openvpn-install.env
+	echo RSA_KEY_SIZE_CHOICE=$RSA_KEY_SIZE_CHOICE >> ~/openvpn-install.env
+	echo TLS_SIG=$TLS_SIG >> ~/openvpn-install.env
 }
 
 function installOpenVPN() {
 	if [[ $AUTO_INSTALL == "y" ]]; then
-        if [ -f ~/openvpn-install.env ]; then
-            source ~/openvpn-install.env
-        else
-            default_options()
-        fi
+		if [ -f ~/openvpn-install.env ]; then
+			source ~/openvpn-install.env
+		else
+			default_options()
+		fi
 	fi
 
 	# Run setup questions first, and set other variables if auto-install
@@ -1186,8 +1187,6 @@ function newClient() {
 	echo ""
 	echo "The configuration file has been written to $homeDir/$CLIENT.ovpn."
 	echo "Download the .ovpn file and import it in your OpenVPN client."
-
-	exit 0
 }
 
 function revokeClient() {
@@ -1375,4 +1374,7 @@ if [[ -e /etc/openvpn/server.conf && $AUTO_INSTALL != "y" ]]; then
 	manageMenu
 else
 	installOpenVPN
+	save_options
 fi
+
+exit 0
