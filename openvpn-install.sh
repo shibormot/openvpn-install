@@ -652,7 +652,8 @@ function save_options() {
 	set_default_home_dir
 	local file_name
 	filename=$homeDir/openvpn-install.env
-	echo "" > $file_name
+	rm -f $file_name
+	touch $file_name
 	echo CC_CIPHER_CHOICE=$CC_CIPHER_CHOICE >> $file_name
 	echo CERT_CURVE_CHOICE=$CERT_CURVE_CHOICE >> $file_name
 	echo CERT_TYPE=$CERT_TYPE >> $file_name
