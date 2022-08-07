@@ -654,8 +654,8 @@ function save_options() {
 	file_name=$homeDir/openvpn-install.env
 	rm -f $file_name
 	touch $file_name
-	echo "APPROVE_INSTALL=n" >> $file_name
-	echo "APPROVE_IP=n" >> $file_name
+	echo "APPROVE_INSTALL=y" >> $file_name
+	echo "APPROVE_IP=y" >> $file_name
 	echo CC_CIPHER_CHOICE=$CC_CIPHER_CHOICE >> $file_name
 	echo CERT_CURVE_CHOICE=$CERT_CURVE_CHOICE >> $file_name
 	echo CERT_TYPE=$CERT_TYPE >> $file_name
@@ -1383,7 +1383,7 @@ function manageMenu() {
 initialCheck
 
 # Check if OpenVPN is already installed
-if [[ -e /etc/openvpn/server.conf && $AUTO_INSTALL != "y" ]]; then
+if [[ -e /etc/openvpn/server.conf ]]; then
 	manageMenu
 else
 	installOpenVPN
