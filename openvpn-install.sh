@@ -610,28 +610,64 @@ function installQuestions() {
 	fi
 }
 
+function default_options() {
+	# Set default choices so that no questions will be asked.
+	APPROVE_INSTALL=${APPROVE_INSTALL:-y}
+	APPROVE_IP=${APPROVE_IP:-y}
+	IPV6_SUPPORT=${IPV6_SUPPORT:-n}
+	PORT_CHOICE=${PORT_CHOICE:-1}
+	PROTOCOL_CHOICE=${PROTOCOL_CHOICE:-1}
+	DNS=${DNS:-1}
+	COMPRESSION_ENABLED=${COMPRESSION_ENABLED:-n}
+	CUSTOMIZE_ENC=${CUSTOMIZE_ENC:-n}
+	CLIENT=${CLIENT:-client}
+	PASS=${PASS:-1}
+	CONTINUE=${CONTINUE:-y}
+
+	# Behind NAT, we'll default to the publicly reachable IPv4/IPv6.
+	if [[ $IPV6_SUPPORT == "y" ]]; then
+		PUBLIC_IP=$(curl --retry 5 --retry-connrefused https://ifconfig.co)
+	else
+		PUBLIC_IP=$(curl --retry 5 --retry-connrefused -4 https://ifconfig.co)
+	fi
+	ENDPOINT=${ENDPOINT:-$PUBLIC_IP}
+}
+
+function save_options() {
+    echo CC_CIPHER_CHOICE=$CC_CIPHER_CHOICE >> ~/openvpn-install.env
+    echo CERT_CURVE_CHOICE=$CERT_CURVE_CHOICE >> ~/openvpn-install.env
+    echo CERT_TYPE=$CERT_TYPE >> ~/openvpn-install.env
+    echo CIPHER_CHOICE=$CIPHER_CHOICE >> ~/openvpn-install.env
+    echo CLIENT=$CLIENT >> ~/openvpn-install.env
+    echo CLIENTNUMBER=$CLIENTNUMBER >> ~/openvpn-install.env
+    echo COMPRESSION_CHOICE=$COMPRESSION_CHOICE >> ~/openvpn-install.env
+    echo COMPRESSION_ENABLED=$COMPRESSION_ENABLED >> ~/openvpn-install.env
+    echo CUSTOMIZE_ENC=$CUSTOMIZE_ENC >> ~/openvpn-install.env
+    echo DH_CURVE_CHOICE=$DH_CURVE_CHOICE >> ~/openvpn-install.env
+    echo DH_KEY_SIZE_CHOICE=$DH_KEY_SIZE_CHOICE >> ~/openvpn-install.env
+    echo DH_TYPE=$DH_TYPE >> ~/openvpn-install.env
+    echo DNS=$DNS >> ~/openvpn-install.env
+    echo DNS1=$DNS1 >> ~/openvpn-install.env
+    echo DNS2=$DNS2 >> ~/openvpn-install.env
+    echo ENDPOINT=$ENDPOINT >> ~/openvpn-install.env
+    echo HMAC_ALG_CHOICE=$HMAC_ALG_CHOICE >> ~/openvpn-install.env
+    echo IP=$IP >> ~/openvpn-install.env
+    echo IPV6_SUPPORT=$IPV6_SUPPORT >> ~/openvpn-install.env
+    echo PASS=$PASS >> ~/openvpn-install.env
+    echo PORT=$PORT >> ~/openvpn-install.env
+    echo PORT_CHOICE=$PORT_CHOICE >> ~/openvpn-install.env
+    echo PROTOCOL_CHOICE=$PROTOCOL_CHOICE >> ~/openvpn-install.env
+    echo RSA_KEY_SIZE_CHOICE=$RSA_KEY_SIZE_CHOICE >> ~/openvpn-install.env
+    echo TLS_SIG=$TLS_SIG >> ~/openvpn-install.env
+}
+
 function installOpenVPN() {
 	if [[ $AUTO_INSTALL == "y" ]]; then
-		# Set default choices so that no questions will be asked.
-		APPROVE_INSTALL=${APPROVE_INSTALL:-y}
-		APPROVE_IP=${APPROVE_IP:-y}
-		IPV6_SUPPORT=${IPV6_SUPPORT:-n}
-		PORT_CHOICE=${PORT_CHOICE:-1}
-		PROTOCOL_CHOICE=${PROTOCOL_CHOICE:-1}
-		DNS=${DNS:-1}
-		COMPRESSION_ENABLED=${COMPRESSION_ENABLED:-n}
-		CUSTOMIZE_ENC=${CUSTOMIZE_ENC:-n}
-		CLIENT=${CLIENT:-client}
-		PASS=${PASS:-1}
-		CONTINUE=${CONTINUE:-y}
-
-		# Behind NAT, we'll default to the publicly reachable IPv4/IPv6.
-		if [[ $IPV6_SUPPORT == "y" ]]; then
-			PUBLIC_IP=$(curl --retry 5 --retry-connrefused https://ifconfig.co)
-		else
-			PUBLIC_IP=$(curl --retry 5 --retry-connrefused -4 https://ifconfig.co)
-		fi
-		ENDPOINT=${ENDPOINT:-$PUBLIC_IP}
+        if [ -f ~/openvpn-install.env ]; then
+            source ~/openvpn-install.env
+        else
+            default_options()
+        fi
 	fi
 
 	# Run setup questions first, and set other variables if auto-install
