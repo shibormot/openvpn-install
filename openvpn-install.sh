@@ -610,6 +610,21 @@ function installQuestions() {
 	fi
 }
 
+function set_default_home_dir() {
+	if [ "${SUDO_USER}" ]; then
+		# if not, use SUDO_USER
+		if [ "${SUDO_USER}" == "root" ]; then
+			# If running sudo as root
+			homeDir="/root"
+		else
+			homeDir="/home/${SUDO_USER}"
+		fi
+	else
+		# if not SUDO_USER, use /root
+		homeDir="/root"
+	fi
+}
+
 function default_options() {
 	# Set default choices so that no questions will be asked.
 	APPROVE_INSTALL=${APPROVE_INSTALL:-y}
@@ -634,32 +649,34 @@ function default_options() {
 }
 
 function save_options() {
-	echo "" > ~/openvpn-install.env
-	echo CC_CIPHER_CHOICE=$CC_CIPHER_CHOICE >> ~/openvpn-install.env
-	echo CERT_CURVE_CHOICE=$CERT_CURVE_CHOICE >> ~/openvpn-install.env
-	echo CERT_TYPE=$CERT_TYPE >> ~/openvpn-install.env
-	echo CIPHER_CHOICE=$CIPHER_CHOICE >> ~/openvpn-install.env
-	echo CLIENT=$CLIENT >> ~/openvpn-install.env
-	echo CLIENTNUMBER=$CLIENTNUMBER >> ~/openvpn-install.env
-	echo COMPRESSION_CHOICE=$COMPRESSION_CHOICE >> ~/openvpn-install.env
-	echo COMPRESSION_ENABLED=$COMPRESSION_ENABLED >> ~/openvpn-install.env
-	echo CUSTOMIZE_ENC=$CUSTOMIZE_ENC >> ~/openvpn-install.env
-	echo DH_CURVE_CHOICE=$DH_CURVE_CHOICE >> ~/openvpn-install.env
-	echo DH_KEY_SIZE_CHOICE=$DH_KEY_SIZE_CHOICE >> ~/openvpn-install.env
-	echo DH_TYPE=$DH_TYPE >> ~/openvpn-install.env
-	echo DNS=$DNS >> ~/openvpn-install.env
-	echo DNS1=$DNS1 >> ~/openvpn-install.env
-	echo DNS2=$DNS2 >> ~/openvpn-install.env
-	echo ENDPOINT=$ENDPOINT >> ~/openvpn-install.env
-	echo HMAC_ALG_CHOICE=$HMAC_ALG_CHOICE >> ~/openvpn-install.env
-	echo IP=$IP >> ~/openvpn-install.env
-	echo IPV6_SUPPORT=$IPV6_SUPPORT >> ~/openvpn-install.env
-	echo PASS=$PASS >> ~/openvpn-install.env
-	echo PORT=$PORT >> ~/openvpn-install.env
-	echo PORT_CHOICE=$PORT_CHOICE >> ~/openvpn-install.env
-	echo PROTOCOL_CHOICE=$PROTOCOL_CHOICE >> ~/openvpn-install.env
-	echo RSA_KEY_SIZE_CHOICE=$RSA_KEY_SIZE_CHOICE >> ~/openvpn-install.env
-	echo TLS_SIG=$TLS_SIG >> ~/openvpn-install.env
+	set_default_home_dir
+	local file_name = $homeDir/openvpn-install.env
+	echo "" > $file_name
+	echo CC_CIPHER_CHOICE=$CC_CIPHER_CHOICE >> $file_name
+	echo CERT_CURVE_CHOICE=$CERT_CURVE_CHOICE >> $file_name
+	echo CERT_TYPE=$CERT_TYPE >> $file_name
+	echo CIPHER_CHOICE=$CIPHER_CHOICE >> $file_name
+	echo CLIENT=$CLIENT >> $file_name
+	echo CLIENTNUMBER=$CLIENTNUMBER >> $file_name
+	echo COMPRESSION_CHOICE=$COMPRESSION_CHOICE >> $file_name
+	echo COMPRESSION_ENABLED=$COMPRESSION_ENABLED >> $file_name
+	echo CUSTOMIZE_ENC=$CUSTOMIZE_ENC >> $file_name
+	echo DH_CURVE_CHOICE=$DH_CURVE_CHOICE >> $file_name
+	echo DH_KEY_SIZE_CHOICE=$DH_KEY_SIZE_CHOICE >> $file_name
+	echo DH_TYPE=$DH_TYPE >> $file_name
+	echo DNS=$DNS >> $file_name
+	echo DNS1=$DNS1 >> $file_name
+	echo DNS2=$DNS2 >> $file_name
+	echo ENDPOINT=$ENDPOINT >> $file_name
+	echo HMAC_ALG_CHOICE=$HMAC_ALG_CHOICE >> $file_name
+	echo IP=$IP >> $file_name
+	echo IPV6_SUPPORT=$IPV6_SUPPORT >> $file_name
+	echo PASS=$PASS >> $file_name
+	echo PORT=$PORT >> $file_name
+	echo PORT_CHOICE=$PORT_CHOICE >> $file_name
+	echo PROTOCOL_CHOICE=$PROTOCOL_CHOICE >> $file_name
+	echo RSA_KEY_SIZE_CHOICE=$RSA_KEY_SIZE_CHOICE >> $file_name
+	echo TLS_SIG=$TLS_SIG >> $file_name
 }
 
 function installOpenVPN() {
@@ -667,7 +684,7 @@ function installOpenVPN() {
 		if [ -f ~/openvpn-install.env ]; then
 			source ~/openvpn-install.env
 		else
-			default_options()
+			default_options
 		fi
 	fi
 
@@ -1134,17 +1151,9 @@ function newClient() {
 	if [ -e "/home/${CLIENT}" ]; then
 		# if $1 is a user name
 		homeDir="/home/${CLIENT}"
-	elif [ "${SUDO_USER}" ]; then
-		# if not, use SUDO_USER
-		if [ "${SUDO_USER}" == "root" ]; then
-			# If running sudo as root
-			homeDir="/root"
-		else
-			homeDir="/home/${SUDO_USER}"
-		fi
 	else
 		# if not SUDO_USER, use /root
-		homeDir="/root"
+		set_default_home_dir
 	fi
 
 	# Determine if we use tls-auth or tls-crypt
